@@ -19,6 +19,6 @@
   "require": {
     "php": "^7.3",
     "ext-json": "*",
-    "laravel/framework": "^8.2"
+    "laravel/framework": "^8.0"
   }
 }
