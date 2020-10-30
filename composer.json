@@ -1,0 +1,24 @@
+{
+  "name": "wisnet/laravel-starter-kit",
+  "description": "A collection of dependencies aimed to streamline development of a brand new Laravel project",
+  "keywords": [
+    "wisnet",
+    "laravel",
+    "starter kit"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Rosillo",
+      "email": "drosillo@wisnet.com",
+      "homepage": "https://www.wisnet.com/",
+      "role": "Developer"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7.3",
+    "ext-json": "*",
+    "laravel/framework": "^8.2"
+  }
+}
