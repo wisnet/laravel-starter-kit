@@ -37,16 +37,16 @@ class InstallCommand extends Command
         $this->addTelescopeToEnvFile();
 
         $this->info('Installing Telescope');
-        $this->call('php artisan telescope:install');
+        $this->call('telescope:install');
 
         $this->info('Publishing Fortify assets');
-        $this->call('php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"');
+        $this->call('vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"');
 
         $this->info('Adding Sentry reporting to application\'s error handler');
         $this->addSentryReporting();
 
         $this->info('You\'re all set! If you already have a DSN from Sentry make sure to run the following command:');
-        $this->info('php artisan sentry:publish --dsn=your_DSN');
+        $this->info('sentry:publish --dsn=your_DSN');
     }
 
     private function addTelescopeToEnvFile()
@@ -57,7 +57,7 @@ class InstallCommand extends Command
             $keyPos = strpos($str, self::TELESCOPE_KEY);
 
             if ($keyPos === false) {
-                $str .= '\n' . self::TELESCOPE_KEY . 'true' . '\n';
+                $str .= PHP_EOL . self::TELESCOPE_KEY . 'true' . PHP_EOL;
             }
 
             file_put_contents($envFile, $str);
