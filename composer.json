@@ -28,7 +28,7 @@
     "psr-0": {
       "Wisnet\\LaravelStarterKit\\": "src/"
     }
-  }
+  },
   "extra": {
     "laravel": {
       "providers": [
