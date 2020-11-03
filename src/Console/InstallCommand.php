@@ -39,6 +39,7 @@ class InstallCommand extends Command
 
         $this->info('Installing Telescope');
         $this->call('telescope:install');
+        $this->call('vendor:publish', ['--tag' => 'telescope-migrations']);
 
         $this->info('Publishing Fortify assets');
         $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
@@ -58,7 +59,7 @@ class InstallCommand extends Command
             $keyPos = strpos($str, self::TELESCOPE_KEY);
 
             if ($keyPos === false) {
-                $str .= PHP_EOL . PHP_EOL . self::TELESCOPE_KEY . 'true' . PHP_EOL;
+                $str .= PHP_EOL . self::TELESCOPE_KEY . 'true' . PHP_EOL;
             }
 
             file_put_contents($envFile, $str);
