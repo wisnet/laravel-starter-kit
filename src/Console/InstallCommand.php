@@ -40,7 +40,7 @@ class InstallCommand extends Command
         $this->call('telescope:install');
 
         $this->info('Publishing Fortify assets');
-        $this->call('vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"');
+        $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
 
         $this->info('Adding Sentry reporting to application\'s error handler');
         $this->addSentryReporting();
@@ -57,7 +57,7 @@ class InstallCommand extends Command
             $keyPos = strpos($str, self::TELESCOPE_KEY);
 
             if ($keyPos === false) {
-                $str .= PHP_EOL . self::TELESCOPE_KEY . 'true' . PHP_EOL;
+                $str .= PHP_EOL . PHP_EOL . self::TELESCOPE_KEY . 'true' . PHP_EOL;
             }
 
             file_put_contents($envFile, $str);
