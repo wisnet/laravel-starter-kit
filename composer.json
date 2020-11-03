@@ -29,4 +29,11 @@
       "Wisnet\\LaravelStarterKit\\": "src/"
     }
   }
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LaravelStarterKitServiceProvider"
+      ]
+    }
+  }
 }
