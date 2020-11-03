@@ -74,7 +74,7 @@ class InstallCommand extends Command
 
         if ($fPos === false) {
             $closerPos = strpos($str, self::CLOSING_BRACKET, -1);
-            $fn = file_get_contents('report.txt');
+            $fn = file_get_contents('/src/report.txt');
 
             $str = substr_replace($str, $fn, $closerPos - 1);
 
