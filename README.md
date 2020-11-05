@@ -38,6 +38,8 @@ Next, run the following command to finish setting up Sentry:
 
 `php artisan sentry:publish --dsn=paste-your-dsn-here`
 
+Don't forget to uncomment the report method inside your application's exception handler.
+
 ## Documentation
 
 The official documentation for each package can be found in the following links:
