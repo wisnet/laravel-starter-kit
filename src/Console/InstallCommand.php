@@ -11,7 +11,7 @@ class InstallCommand extends Command
     const HANDLER_FILE = 'Exceptions/Handler.php';
     const SENTRY_REPORT_SEARCH = 'public function report';
     const CLOSING_BRACKET = '}';
-    const REPORT_PATH = '/vendor/wisnet/laravel-starter-kit/src/report.txt';
+    const REPORT_PATH = __DIR__ . '/report.txt';
 
     /**
      * The command name.
@@ -39,6 +39,7 @@ class InstallCommand extends Command
 
         $this->info('Installing Telescope');
         $this->call('telescope:install');
+        $this->info('Publishing Telescope migrations');
         $this->call('vendor:publish', ['--tag' => 'telescope-migrations']);
 
         $this->info('Publishing Fortify assets');
