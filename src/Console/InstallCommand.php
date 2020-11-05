@@ -50,6 +50,7 @@ class InstallCommand extends Command
 
         $this->info('You\'re all set! If you already have a DSN from Sentry make sure to run the following command:');
         $this->info('sentry:publish --dsn=your_DSN');
+        $this->info('Additionally, uncomment the report method inside your application\'s exception handler.');
     }
 
     private function addTelescopeToEnvFile()
