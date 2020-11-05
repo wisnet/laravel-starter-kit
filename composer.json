@@ -19,10 +19,10 @@
     "php": "^7.3",
     "ext-json": "*",
     "laravel/framework": "^8.2",
-    "laravel/telescope": "^4.2",
-    "laravel/fortify": "^1.6",
+    "laravel/telescope": "^4.3.1",
+    "laravel/fortify": "^1.7",
     "jaybizzle/laravel-migrations-organiser": "^6.0",
-    "sentry/sentry-laravel": "^2.1"
+    "sentry/sentry-laravel": "^2.2"
   },
   "autoload": {
     "psr-4": {
