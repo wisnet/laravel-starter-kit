@@ -53,11 +53,11 @@ class InstallCommand extends Command
         $this->info('Publishing Telescope migrations');
         $this->call('vendor:publish', ['--tag' => 'telescope-migrations']);
 
-        $this->info('Organizing migrations');
-        $this->call('migrate:organise');
-
         $this->info('Publishing Fortify assets');
         $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
+
+        $this->info('Organizing migrations');
+        $this->call('migrate:organise');
 
         $this->checkDirectories();
         $this->info('Publishing views');
