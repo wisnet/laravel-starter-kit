@@ -9,9 +9,12 @@ class InstallCommand extends Command
 
     const TELESCOPE_KEY = 'TELESCOPE_ENABLED=';
     const HANDLER_FILE = 'Exceptions/Handler.php';
+    const FORTIFY_PROVIDER = 'Providers/FortifyServiceProvider.php';
     const SENTRY_REPORT_SEARCH = 'public function report';
+    const FORTIFY_BOOT_SEARCH = 'Fortify::resetUserPasswordsUsing(ResetUserPassword::class);';
     const CLOSING_BRACKET = '}';
     const REPORT_PATH = __DIR__ . '/../report.txt';
+    const FORTIFY_PATH = __DIR__ . '/../fortify.txt';
 
     /**
      * The command name.
@@ -62,6 +65,9 @@ class InstallCommand extends Command
         $this->checkDirectories();
         $this->info('Publishing views');
         $this->publishViews();
+
+        $this->info('Registering views with Fortify');
+        $this->registerViews();
 
         $this->info('Adding Sentry reporting to application\'s error handler');
         $this->addSentryReporting();
@@ -140,5 +146,16 @@ class InstallCommand extends Command
                 $view
             );
         }
+    }
+
+    private function registerViews()
+    {
+        $provider = app_path(self::FORTIFY_PROVIDER);
+        $str = file_get_contents($provider);
+        $lPos = strpos($str, self::FORTIFY_BOOT_SEARCH);
+
+        $txt = file_get_contents(self::FORTIFY_PATH);
+        $str = substr_replace($str, $txt, $lPos + strlen(self::FORTIFY_BOOT_SEARCH));
+        file_put_contents($provider, $str);
     }
 }
