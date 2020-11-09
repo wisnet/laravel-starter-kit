@@ -25,7 +25,18 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Install packages in the starter kit';
+    protected $description = 'Installs the starter kit {--force : Overwrite existing views by default}';
+
+    protected $views = [
+        'auth/login.stub' => 'auth/login.blade.php',
+        'auth/passwords/confirm.stub' => 'auth/passwords/confirm.blade.php',
+        'auth/passwords/email.stub' => 'auth/passwords/email.blade.php',
+        'auth/passwords/reset.stub' => 'auth/passwords/reset.blade.php',
+        'auth/register.stub' => 'auth/register.blade.php',
+        'auth/verify.stub' => 'auth/verify.blade.php',
+        'home.stub' => 'home.blade.php',
+        'layouts/app.stub' => 'layouts/app.blade.php',
+    ];
 
     /**
      * Execute the command.
@@ -47,6 +58,10 @@ class InstallCommand extends Command
 
         $this->info('Publishing Fortify assets');
         $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
+
+        $this->checkDirectories();
+        $this->info('Publishing views');
+        $this->publishViews();
 
         $this->info('Adding Sentry reporting to application\'s error handler');
         $this->addSentryReporting();
@@ -86,6 +101,44 @@ class InstallCommand extends Command
             $str = substr_replace($str, $fn, $closerPos - 2);
 
             file_put_contents($handlerFile, $str);
+        }
+    }
+
+    private function checkDirectories()
+    {
+        if (!is_dir($directory = $this->buildPath('layouts'))) {
+            mkdir($directory, 0755, true);
+        }
+
+        if (!is_dir($directory = $this->buildPath('auth/passwords'))) {
+            mkdir($directory, 0755, true);
+        }
+    }
+
+    private function buildPath(string $path): string
+    {
+        return implode(
+            DIRECTORY_SEPARATOR,
+            [
+                config('view.paths')[0] ?? resource_path('views'),
+                $path,
+            ]
+        );
+    }
+
+    private function publishViews()
+    {
+        foreach ($this->views as $key => $value) {
+            if (file_exists($view = $this->buildPath($value)) && !$this->option('force')) {
+                if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
+                    continue;
+                }
+            }
+
+            copy(
+                __DIR__ . '../resources/views/' . $key,
+                $view
+            );
         }
     }
 }
