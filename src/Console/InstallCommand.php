@@ -15,6 +15,17 @@ class InstallCommand extends Command
     const CLOSING_BRACKET = '}';
     const REPORT_PATH = __DIR__ . '/../report.txt';
     const FORTIFY_PATH = __DIR__ . '/../fortify.txt';
+    const LAYOUTS_DIR = 'layouts';
+    const PASSWORDS_DIR = 'auth/passwords';
+    const SASS_DIR = 'sass';
+    const VIEWS_DIR = 'views';
+    const DIRECTORIES = [
+        self::VIEWS_DIR => [
+            self::LAYOUTS_DIR,
+            self::PASSWORDS_DIR,
+        ],
+        self::SASS_DIR => []
+    ];
 
     /**
      * The command name.
@@ -112,21 +123,24 @@ class InstallCommand extends Command
 
     private function checkDirectories()
     {
-        if (!is_dir($directory = $this->buildPath('layouts'))) {
-            mkdir($directory, 0755, true);
-        }
-
-        if (!is_dir($directory = $this->buildPath('auth/passwords'))) {
-            mkdir($directory, 0755, true);
+        foreach (self::DIRECTORIES as $topDir => $dirs) {
+            if (!is_dir($directory = $this->buildPath($topDir))) {
+                mkdir($directory, 0755, true);
+            }
+            foreach ($dirs as $dir => $path) {
+                if (!is_dir($directory = $this->buildPath($topDir, $path))) {
+                    mkdir($directory, 0755, true);
+                }
+            }
         }
     }
 
-    private function buildPath(string $path): string
+    private function buildPath(string $topDir, ?string $path = ''): string
     {
         return implode(
             DIRECTORY_SEPARATOR,
             [
-                config('view.paths')[0] ?? resource_path('views'),
+                resource_path($topDir),
                 $path,
             ]
         );
@@ -142,7 +156,7 @@ class InstallCommand extends Command
             }
 
             copy(
-                __DIR__ . '/../resources/views/' . $key,
+                __DIR__ . resource_path(self::VIEWS_DIR) . $key,
                 $view
             );
         }
