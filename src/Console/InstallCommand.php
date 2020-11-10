@@ -3,6 +3,7 @@
 namespace Wisnet\LaravelStarterKit\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 
 class InstallCommand extends Command
 {
@@ -86,6 +87,8 @@ class InstallCommand extends Command
         'app.scss',
     ];
 
+    protected $filesystem;
+
     /**
      * Execute the command.
      *
@@ -162,33 +165,20 @@ class InstallCommand extends Command
 
     private function checkDirectories()
     {
+        $this->filesystem = new Filesystem();
         foreach (self::DIRECTORIES as $topDir => $dirs) {
-            if (!is_dir($directory = $this->buildPath($topDir))) {
-                mkdir($directory, 0755, true);
-            }
+            $this->filesystem->ensureDirectoryExists(resource_path($topDir));
             foreach ($dirs as $dir => $path) {
-                if (!is_dir($directory = $this->buildPath($topDir, $path))) {
-                    mkdir($directory, 0755, true);
-                }
+                $this->filesystem->ensureDirectoryExists(sprintf('%s/%s', resource_path($topDir), $path));
             }
         }
-    }
-
-    private function buildPath(string $topDir, ?string $path = ''): string
-    {
-        return implode(
-            DIRECTORY_SEPARATOR,
-            [
-                resource_path($topDir),
-                $path,
-            ]
-        );
     }
 
     private function publishViews()
     {
         foreach ($this->views as $key => $value) {
-            if (file_exists($view = $this->buildPath(self::VIEWS_DIR, $value)) && !$this->option('force')) {
+            $view = sprintf('%s/%s', resource_path(self::VIEWS_DIR), $value);
+            if (file_exists($view && !$this->option('force'))) {
                 if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
                     continue;
                 }
@@ -215,7 +205,8 @@ class InstallCommand extends Command
     private function publishSassAssets()
     {
         foreach ($this->sassFiles as $key => $value) {
-            if (file_exists($view = $this->buildPath(self::SASS_DIR, $value)) && !$this->option('force')) {
+            $view = sprintf('%s/%s', resource_path(self::SASS_DIR), $value);
+            if (file_exists($view) && !$this->option('force')) {
                 if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
                     continue;
                 }
