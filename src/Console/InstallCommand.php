@@ -19,12 +19,25 @@ class InstallCommand extends Command
     const PASSWORDS_DIR = 'auth/passwords';
     const SASS_DIR = 'sass';
     const VIEWS_DIR = 'views';
+    const SASS_ABSTRACTS = 'abstracts';
+    const SASS_BASE = 'base';
+    const SASS_COMPONENTS = 'components';
+    const SASS_LAYOUT = 'layout';
+    const SASS_MODULES = 'modules';
+    const SASS_PAGES = 'pages';
     const DIRECTORIES = [
         self::VIEWS_DIR => [
             self::LAYOUTS_DIR,
             self::PASSWORDS_DIR,
         ],
-        self::SASS_DIR => []
+        self::SASS_DIR => [
+            self::SASS_ABSTRACTS,
+            self::SASS_BASE,
+            self::SASS_COMPONENTS,
+            self::SASS_LAYOUT,
+            self::SASS_MODULES,
+            self::SASS_PAGES
+        ]
     ];
 
     /**
@@ -52,6 +65,27 @@ class InstallCommand extends Command
         'layouts/app.stub' => 'layouts/app.blade.php',
     ];
 
+    protected $sassFiles = [
+        'abstracts/_abstracts.scss',
+        'abstracts/_colors.scss',
+        'abstracts/_functions.scss',
+        'abstracts/_mixins.scss',
+        'abstracts/_typography.scss',
+        'base/_base.scss',
+        'base/_buttons.scss',
+        'base/_form-elements.scss',
+        'base/_headings.scss',
+        'base/_links.scss',
+        'components/_components.scss',
+        'layout/_dashboard.scss',
+        'layout/_footer-main.scss',
+        'layout/_header-main.scss',
+        'layout/_layout.scss',
+        'modules/_modules.scss',
+        'pages/_pages.scss',
+        'app.scss',
+    ];
+
     /**
      * Execute the command.
      *
@@ -59,6 +93,7 @@ class InstallCommand extends Command
      */
     public function handle()
     {
+        // Back-end processes
         $this->info('Adding Telescope key to the .env file');
         $this->addTelescopeToEnvFile();
 
@@ -82,6 +117,10 @@ class InstallCommand extends Command
 
         $this->info('Adding Sentry reporting to application\'s error handler');
         $this->addSentryReporting();
+
+        // Front-end processes
+        $this->info('Publishing Sass assets');
+        $this->publishSassAssets();
 
         $this->info('You\'re all set! If you already have a DSN from Sentry make sure to run the following command:');
         $this->info('sentry:publish --dsn=your_DSN');
@@ -149,14 +188,14 @@ class InstallCommand extends Command
     private function publishViews()
     {
         foreach ($this->views as $key => $value) {
-            if (file_exists($view = $this->buildPath($value)) && !$this->option('force')) {
+            if (file_exists($view = $this->buildPath(self::VIEWS_DIR, $value)) && !$this->option('force')) {
                 if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
                     continue;
                 }
             }
 
             copy(
-                __DIR__ . resource_path(self::VIEWS_DIR) . $key,
+                __DIR__ . '/../resources/views/' . $key,
                 $view
             );
         }
@@ -171,5 +210,21 @@ class InstallCommand extends Command
         $txt = file_get_contents(self::FORTIFY_PATH);
         $str = substr_replace($str, $txt, $lPos + strlen(self::FORTIFY_BOOT_SEARCH));
         file_put_contents($provider, $str);
+    }
+
+    private function publishSassAssets()
+    {
+        foreach ($this->sassFiles as $key => $value) {
+            if (file_exists($view = $this->buildPath(self::SASS_DIR, $value)) && !$this->option('force')) {
+                if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
+                    continue;
+                }
+            }
+
+            copy(
+                __DIR__ . '/../resources/sass/' . $view,
+                $view
+            );
+        }
     }
 }

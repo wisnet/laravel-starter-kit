@@ -1,0 +1,5 @@
+@mixin note-avatar ($width: 65px) {
+  max-width: $width;
+  border-radius: 8px;
+  position: relative;
+}
