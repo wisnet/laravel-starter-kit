@@ -22,12 +22,18 @@ class InstallCommand extends Command
     const PASSWORDS_DIR = 'auth/passwords';
     const SASS_DIR = 'sass';
     const VIEWS_DIR = 'views';
+    const JS_DIR = 'js';
     const SASS_ABSTRACTS = 'abstracts';
     const SASS_BASE = 'base';
     const SASS_COMPONENTS = 'components';
     const SASS_LAYOUT = 'layout';
     const SASS_MODULES = 'modules';
     const SASS_PAGES = 'pages';
+    const DEV_DEPENDENCIES = 'devDependencies';
+    const SCRIPTS = 'scripts';
+    const PACKAGE = 'package.json';
+    const WEBPACK = 'webpack.mix.js';
+
     const DIRECTORIES = [
         self::VIEWS_DIR => [
             self::LAYOUTS_DIR,
@@ -40,11 +46,9 @@ class InstallCommand extends Command
             self::SASS_LAYOUT,
             self::SASS_MODULES,
             self::SASS_PAGES
-        ]
+        ],
+        self::JS_DIR => []
     ];
-    const DEV_DEPENDENCIES = 'devDependencies';
-    const SCRIPTS = 'scripts';
-    const PACKAGE = 'package.json';
     const SCRIPTS_EXCEPTIONS = [
         'development',
         'watch',
@@ -97,6 +101,12 @@ class InstallCommand extends Command
         'modules/_modules.scss',
         'pages/_pages.scss',
         'app.scss',
+    ];
+
+    protected $jsFiles = [
+        'app.js',
+        'bootstrap.js',
+        'ExampleComponent.vue'
     ];
 
     protected $devDependencies = [
@@ -171,12 +181,17 @@ class InstallCommand extends Command
         $this->addSentryReporting();
 
         // Front-end processes
-        $this->info('Publishing Sass assets');
+        $this->info('Publishing front-end assets');
         $this->publishSassAssets();
+        $this->publishJsAssets();
 
         $this->info('Updating package.json');
         $this->addNodePackages();
         $this->info('package.json updated');
+
+        $this->info('Updating webpack.mix.js');
+        $this->updateWebpack();
+        $this->info('webpack.mix.js updated');
 
         $this->info('You\'re all set! If you already have a DSN from Sentry make sure to run the following command:');
         $this->info('sentry:publish --dsn=your_DSN');
@@ -258,16 +273,33 @@ class InstallCommand extends Command
     private function publishSassAssets()
     {
         foreach ($this->sassFiles as $key => $value) {
-            $view = sprintf('%s/%s', resource_path(self::SASS_DIR), $value);
-            if (file_exists($view) && !$this->option('force')) {
-                if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
+            $file = sprintf('%s/%s', resource_path(self::SASS_DIR), $value);
+            if (file_exists($file) && !$this->option('force')) {
+                if (!$this->confirm("[{$value}] already exists. Do you want to replace it?")) {
                     continue;
                 }
             }
 
             copy(
-                __DIR__ . '/../resources/sass/' . $view,
-                $view
+                __DIR__ . '/../resources/sass/' . $file,
+                $file
+            );
+        }
+    }
+
+    private function publishJsAssets()
+    {
+        foreach ($this->jsFiles as $key => $value) {
+            $file = sprintf('%s/%s', resource_path(self::JS_DIR), $value);
+            if (file_exists($file) && !$this->option('force')) {
+                if (!$this->confirm("[{$file}] already exists. Do you want to replace it?")) {
+                    continue;
+                }
+            }
+
+            copy(
+                __DIR__ . '/../resources/js/' . $file,
+                $file
             );
         }
     }
@@ -305,6 +337,14 @@ class InstallCommand extends Command
         copy(
             __DIR__ . '/../' . self::PACKAGE,
             base_path(self::PACKAGE)
+        );
+    }
+
+    private function updateWebpack()
+    {
+        copy(
+            __DIR__ . '/../' . self::WEBPACK,
+            base_path(self::WEBPACK)
         );
     }
 }
