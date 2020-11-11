@@ -197,6 +197,7 @@ class InstallCommand extends Command
         $this->info('webpack.mix.js updated');
 
         $this->info('Starter Kit installed successfully!');
+        $this->warn('Run "npm install && mix" to compile resources');
     }
 
     private function addTelescopeToEnvFile()
