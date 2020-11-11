@@ -62,14 +62,15 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $name = 'starter-kit:install';
+    protected $name = 'starter-kit:install
+                        {--force : Overwrite existing views by default}';
 
     /**
      * The command description.
      *
      * @var string
      */
-    protected $description = 'Installs the starter kit {--force : Overwrite existing views by default}';
+    protected $description = 'Installs the starter kit';
 
     protected $views = [
         'auth/login.stub' => 'auth/login.blade.php',
