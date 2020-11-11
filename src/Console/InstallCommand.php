@@ -279,7 +279,7 @@ class InstallCommand extends Command
             }
 
             copy(
-                __DIR__ . '/../resources/sass/' . $file,
+                __DIR__ . '/../resources/sass/' . $value,
                 $file
             );
         }
@@ -296,7 +296,7 @@ class InstallCommand extends Command
             }
 
             copy(
-                __DIR__ . '/../resources/js/' . $file,
+                __DIR__ . '/../resources/js/' . $value,
                 $file
             );
         }
