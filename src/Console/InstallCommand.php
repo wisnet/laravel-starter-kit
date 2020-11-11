@@ -244,7 +244,7 @@ class InstallCommand extends Command
     {
         foreach ($this->views as $key => $value) {
             $view = sprintf('%s/%s', resource_path(self::VIEWS_DIR), $value);
-            if (file_exists($view && !$this->option('force'))) {
+            if (file_exists($view) && !$this->option('force')) {
                 if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
                     continue;
                 }
