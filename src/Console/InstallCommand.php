@@ -99,13 +99,14 @@ class InstallCommand extends Command
         'app.scss',
     ];
 
-    protected $nodePackages = [
+    protected $devDependencies = [
         '@vue/compiler-sfc' => '^3.0.2',
         'axios' => '^0.19',
         'bootstrap' => '^4.5.3',
         'cross-env' => '^7.0',
         'jquery' => '^3.5.1',
         'laravel-mix' => '^6.0.0-beta.14',
+        'laravel-mix-eslint-config' => '^0.1.7',
         'lodash' => '^4.17.19',
         'popper.js' => '^1.16.1',
         'postcss' => '^8.1.6',
@@ -121,6 +122,10 @@ class InstallCommand extends Command
         'stylelint-config-standard' => '^20.0.0',
         'stylelint-order' => '^4.1.0',
         'stylelint-scss' => '^3.18.0'
+    ];
+
+    protected $dependencies = [
+        'laravel-mix-alias' => '^1.0.2'
     ];
 
     protected $scripts = [
@@ -279,7 +284,7 @@ class InstallCommand extends Command
             ) ? $packages[self::DEV_DEPENDENCIES] : [];
             $scripts = array_key_exists(self::SCRIPTS, $packages) ? $packages[self::SCRIPTS] : [];
 
-            $packages[self::DEV_DEPENDENCIES] = $this->nodePackages + Arr::except($devDependencies, ['laravel-mix']);
+            $packages[self::DEV_DEPENDENCIES] = $this->devDependencies + Arr::except($devDependencies, ['laravel-mix']);
             $packages[self::SCRIPTS] = $this->scripts + Arr::except($scripts, self::SCRIPTS_EXCEPTIONS);
 
             ksort($packages[self::DEV_DEPENDENCIES]);
