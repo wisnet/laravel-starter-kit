@@ -58,12 +58,11 @@ class InstallCommand extends Command
     ];
 
     /**
-     * The command name.
+     * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'starter-kit:install
-                        {--force : Overwrite existing views by default}';
+    protected $signature = 'starter-kit:install {--force : Overwrite existing views by default}';
 
     /**
      * The command description.
