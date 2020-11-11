@@ -3,7 +3,9 @@
 namespace Wisnet\LaravelStarterKit\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 
 class InstallCommand extends Command
 {
@@ -39,6 +41,16 @@ class InstallCommand extends Command
             self::SASS_MODULES,
             self::SASS_PAGES
         ]
+    ];
+    const DEV_DEPENDENCIES = 'devDependencies';
+    const SCRIPTS = 'scripts';
+    const PACKAGE = 'package.json';
+    const SCRIPTS_EXCEPTIONS = [
+        'development',
+        'watch',
+        'watch-poll',
+        'hot',
+        'production'
     ];
 
     /**
@@ -87,6 +99,38 @@ class InstallCommand extends Command
         'app.scss',
     ];
 
+    protected $nodePackages = [
+        '@vue/compiler-sfc' => '^3.0.2',
+        'axios' => '^0.19',
+        'bootstrap' => '^4.5.3',
+        'cross-env' => '^7.0',
+        'jquery' => '^3.5.1',
+        'laravel-mix' => '^6.0.0-beta.14',
+        'lodash' => '^4.17.19',
+        'popper.js' => '^1.16.1',
+        'postcss' => '^8.1.6',
+        'resolve-url-loader' => '^3.1.0',
+        'sass' => '^1.29.0',
+        'sass-loader' => '^8.0.0',
+        'vue' => '^3.0.2',
+        'vue-loader' => '^16.0.0-rc.1',
+        'eslint' => '^7.9.0',
+        'eslint-loader' => '^4.0.2',
+        'eslint-plugin-vue' => '^6.2.2',
+        'stylelint' => '^13.6.1',
+        'stylelint-config-standard' => '^20.0.0',
+        'stylelint-order' => '^4.1.0',
+        'stylelint-scss' => '^3.18.0'
+    ];
+
+    protected $scripts = [
+        'development' => 'mix',
+        'watch' => 'mix watch',
+        'watch-poll' => 'mix watch -- --watch-options-poll=1000',
+        'hot' => 'mix watch --hot',
+        'production' => 'mix --production'
+    ];
+
     protected $filesystem;
 
     /**
@@ -124,6 +168,10 @@ class InstallCommand extends Command
         // Front-end processes
         $this->info('Publishing Sass assets');
         $this->publishSassAssets();
+
+        $this->info('Updating package.json');
+        $this->addNodePackages();
+        $this->info('package.json updated');
 
         $this->info('You\'re all set! If you already have a DSN from Sentry make sure to run the following command:');
         $this->info('sentry:publish --dsn=your_DSN');
@@ -217,5 +265,41 @@ class InstallCommand extends Command
                 $view
             );
         }
+    }
+
+    private function addNodePackages()
+    {
+        try {
+            $file = $this->filesystem->get(base_path(self::PACKAGE));
+
+            $packages = json_decode($file, true);
+            $devDependencies = array_key_exists(
+                self::DEV_DEPENDENCIES,
+                $packages
+            ) ? $packages[self::DEV_DEPENDENCIES] : [];
+            $scripts = array_key_exists(self::SCRIPTS, $packages) ? $packages[self::SCRIPTS] : [];
+
+            $packages[self::DEV_DEPENDENCIES] = $this->nodePackages + Arr::except($devDependencies, ['laravel-mix']);
+            $packages[self::SCRIPTS] = $this->scripts + Arr::except($scripts, self::SCRIPTS_EXCEPTIONS);
+
+            ksort($packages[self::DEV_DEPENDENCIES]);
+
+            $this->filesystem->put(
+                base_path(self::PACKAGE),
+                json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
+            );
+        } catch (FileNotFoundException $e) {
+            $this->makePackageJson();
+        }
+    }
+
+    private function makePackageJson()
+    {
+        $this->info('No package.json found, creating one');
+
+        copy(
+            __DIR__ . '/../' . self::PACKAGE,
+            base_path(self::PACKAGE)
+        );
     }
 }
