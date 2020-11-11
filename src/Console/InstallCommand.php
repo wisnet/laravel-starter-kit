@@ -167,6 +167,9 @@ class InstallCommand extends Command
         $this->info('Publishing Fortify assets');
         $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
 
+        $this->info('Installing Dusk');
+        $this->call('dusk:install');
+
         $this->info('Organizing migrations');
         $this->call('migrate:organise');
 

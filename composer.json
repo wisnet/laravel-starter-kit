@@ -22,7 +22,8 @@
     "laravel/telescope": "^4.3.1",
     "laravel/fortify": "^1.7",
     "jaybizzle/laravel-migrations-organiser": "^6.0",
-    "sentry/sentry-laravel": "^2.2"
+    "sentry/sentry-laravel": "^2.2",
+    "laravel/dusk": "^6.8"
   },
   "autoload": {
     "psr-4": {
