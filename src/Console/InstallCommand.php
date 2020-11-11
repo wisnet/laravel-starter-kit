@@ -272,11 +272,6 @@ class InstallCommand extends Command
     {
         foreach ($this->sassFiles as $key => $value) {
             $file = sprintf('%s/%s', resource_path(self::SASS_DIR), $value);
-            if (file_exists($file) && !$this->option('force')) {
-                if (!$this->confirm("[{$value}] already exists. Do you want to replace it?")) {
-                    continue;
-                }
-            }
 
             copy(
                 __DIR__ . '/../resources/sass/' . $value,
@@ -289,11 +284,6 @@ class InstallCommand extends Command
     {
         foreach ($this->jsFiles as $key => $value) {
             $file = sprintf('%s/%s', resource_path(self::JS_DIR), $value);
-            if (file_exists($file) && !$this->option('force')) {
-                if (!$this->confirm("[{$file}] already exists. Do you want to replace it?")) {
-                    continue;
-                }
-            }
 
             copy(
                 __DIR__ . '/../resources/js/' . $value,
