@@ -309,7 +309,6 @@ class InstallCommand extends Command
             $packages[self::SCRIPTS] = $this->scripts + Arr::except($scripts, self::SCRIPTS_EXCEPTIONS);
 
             ksort($packages[self::DEV_DEPENDENCIES]);
-            ksort($packages[self::DEPENDENCIES]);
 
             $this->filesystem->put(
                 base_path(self::PACKAGE),
