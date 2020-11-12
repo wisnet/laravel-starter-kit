@@ -82,7 +82,8 @@ The starter kit uses Vue 3 and will provide you with an example component as wel
 
 ## Requirements
 
-Laravel 8.2 is required as the minimum version.
+- Laravel 8.2
+- Node ^10 || ^12 || >=14
 
 ## Getting Started
 
