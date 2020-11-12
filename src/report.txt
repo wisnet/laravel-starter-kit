@@ -1,0 +1,13 @@
+
+    /**
+    * Uncomment this if you're using Sentry. Once you have your DSN run the following command:
+    * php artisan sentry:publish --dsn=your_DSN
+    */
+    // public function report(Throwable $exception)
+    // {
+    //     if ($this->shouldReport($exception) && app()->bound('sentry')) {
+    //         app('sentry')->captureException($exception);
+    //     }
+    //
+    //     parent::report($exception);
+    // }

@@ -1,0 +1,40 @@
+{
+  "name": "wisnet/laravel-starter-kit",
+  "description": "A collection of dependencies aimed to streamline development of a brand new Laravel project",
+  "keywords": [
+    "wisnet",
+    "laravel",
+    "starter kit"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Rosillo",
+      "email": "drosillo@wisnet.com",
+      "homepage": "https://www.wisnet.com/",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.3",
+    "ext-json": "*",
+    "laravel/framework": "^8.2",
+    "laravel/telescope": "^4.3.1",
+    "laravel/fortify": "^1.7",
+    "jaybizzle/laravel-migrations-organiser": "^6.0",
+    "sentry/sentry-laravel": "^2.2",
+    "laravel/dusk": "^6.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "Wisnet\\LaravelStarterKit\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Wisnet\\LaravelStarterKit\\LaravelStarterKitServiceProvider"
+      ]
+    }
+  }
+}
