@@ -84,6 +84,7 @@ The starter kit uses Vue 3 and will provide you with an example component as wel
 
 - Laravel 8.2
 - Node ^10 || ^12 || >=14
+- npm ^6
 
 ## Getting Started
 
