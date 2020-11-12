@@ -30,6 +30,7 @@ class InstallCommand extends Command
     const SASS_MODULES = 'modules';
     const SASS_PAGES = 'pages';
     const DEV_DEPENDENCIES = 'devDependencies';
+    const DEPENDENCIES = 'dependencies';
     const SCRIPTS = 'scripts';
     const PACKAGE = 'package.json';
     const WEBPACK = 'webpack.mix.js';
@@ -306,12 +307,18 @@ class InstallCommand extends Command
                 self::DEV_DEPENDENCIES,
                 $packages
             ) ? $packages[self::DEV_DEPENDENCIES] : [];
+            $dependencies = array_key_exists(
+                self::DEPENDENCIES,
+                $packages
+            ) ? $packages[self::DEPENDENCIES] : [];
             $scripts = array_key_exists(self::SCRIPTS, $packages) ? $packages[self::SCRIPTS] : [];
 
             $packages[self::DEV_DEPENDENCIES] = $this->devDependencies + Arr::except($devDependencies, ['laravel-mix']);
+            $packages[self::DEPENDENCIES] = $this->dependencies + Arr::except($dependencies, []);
             $packages[self::SCRIPTS] = $this->scripts + Arr::except($scripts, self::SCRIPTS_EXCEPTIONS);
 
             ksort($packages[self::DEV_DEPENDENCIES]);
+            ksort($packages[self::DEPENDENCIES]);
 
             $this->filesystem->put(
                 base_path(self::PACKAGE),
