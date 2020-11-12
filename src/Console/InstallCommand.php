@@ -135,10 +135,6 @@ class InstallCommand extends Command
         'stylelint-scss' => '^3.18.0'
     ];
 
-    protected $dependencies = [
-        'laravel-mix-alias' => '^1.0.2'
-    ];
-
     protected $scripts = [
         'development' => 'mix',
         'watch' => 'mix watch',
@@ -307,14 +303,9 @@ class InstallCommand extends Command
                 self::DEV_DEPENDENCIES,
                 $packages
             ) ? $packages[self::DEV_DEPENDENCIES] : [];
-            $dependencies = array_key_exists(
-                self::DEPENDENCIES,
-                $packages
-            ) ? $packages[self::DEPENDENCIES] : [];
             $scripts = array_key_exists(self::SCRIPTS, $packages) ? $packages[self::SCRIPTS] : [];
 
             $packages[self::DEV_DEPENDENCIES] = $this->devDependencies + Arr::except($devDependencies, ['laravel-mix']);
-            $packages[self::DEPENDENCIES] = $this->dependencies + Arr::except($dependencies, []);
             $packages[self::SCRIPTS] = $this->scripts + Arr::except($scripts, self::SCRIPTS_EXCEPTIONS);
 
             ksort($packages[self::DEV_DEPENDENCIES]);

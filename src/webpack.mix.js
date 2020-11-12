@@ -1,5 +1,4 @@
 const mix = require('laravel-mix');
-require('laravel-mix-alias');
 require('laravel-mix-eslint-config');
 
 const production = mix.inProduction();
@@ -39,9 +38,8 @@ mix.alias({
 mix.options({
 	processCssUrls: false
 })
-mix.copy('resources/images', 'public/images');
 mix.js('resources/js/app.js', 'public/js').vue();
-mix.sass('resources/sass/main.scss', 'public/css');
+mix.sass('resources/sass/app.scss', 'public/css');
 
 if (production) {
 	mix.version();
