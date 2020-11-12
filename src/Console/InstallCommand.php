@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class InstallCommand extends Command
 {
@@ -163,6 +164,7 @@ class InstallCommand extends Command
 
         $this->info('Publishing Fortify assets');
         $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
+        $this->publishFortifyServiceProvider();
 
         $this->info('Installing Dusk');
         $this->call('dusk:install');
@@ -228,6 +230,31 @@ class InstallCommand extends Command
 
             file_put_contents($handlerFile, $str);
         }
+    }
+
+    private function publishFortifyServiceProvider()
+    {
+        $namespace = Str::replaceLast('\\', '', $this->laravel->getNamespace());
+
+        $appConfig = file_get_contents(config_path('app.php'));
+
+        if (Str::contains($appConfig, $namespace . '\\Providers\\FortifyServiceProvider::class')) {
+            return;
+        }
+
+        $lineEndingCount = [
+            "\r\n" => substr_count($appConfig, "\r\n"),
+            "\r" => substr_count($appConfig, "\r"),
+            "\n" => substr_count($appConfig, "\n"),
+        ];
+
+        $eol = array_keys($lineEndingCount, max($lineEndingCount))[0];
+
+        file_put_contents(config_path('app.php'), str_replace(
+            "{$namespace}\\Providers\RouteServiceProvider::class,".$eol,
+            "{$namespace}\\Providers\RouteServiceProvider::class,".$eol."        {$namespace}\Providers\FortifyServiceProvider::class,".$eol,
+            $appConfig
+        ));
     }
 
     private function checkDirectories()
