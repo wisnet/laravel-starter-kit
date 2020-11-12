@@ -24,6 +24,7 @@ class InstallCommand extends Command
     const SASS_DIR = 'sass';
     const VIEWS_DIR = 'views';
     const JS_DIR = 'js';
+    const COMPONENTS_DIR = 'components';
     const SASS_ABSTRACTS = 'abstracts';
     const SASS_BASE = 'base';
     const SASS_COMPONENTS = 'components';
@@ -49,7 +50,9 @@ class InstallCommand extends Command
             self::SASS_MODULES,
             self::SASS_PAGES
         ],
-        self::JS_DIR => []
+        self::JS_DIR => [
+            self::COMPONENTS_DIR
+        ]
     ];
     const SCRIPTS_EXCEPTIONS = [
         'development',
@@ -108,7 +111,7 @@ class InstallCommand extends Command
     protected $jsFiles = [
         'app.js',
         'bootstrap.js',
-        'ExampleComponent.vue'
+        'components/ExampleComponent.vue'
     ];
 
     protected $devDependencies = [
