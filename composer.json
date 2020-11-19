@@ -35,6 +35,9 @@
       "providers": [
         "Wisnet\\LaravelStarterKit\\LaravelStarterKitServiceProvider"
       ]
+    },
+    "branch-alias": {
+      "dev-master": "1.x-dev"
     }
   }
 }
