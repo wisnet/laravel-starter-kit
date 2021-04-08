@@ -159,6 +159,9 @@ class InstallCommand extends Command
         $this->info('Installing Dusk');
         $this->call('dusk:install');
 
+        // Sentry
+        $this->call('starter-kit:sentry');
+
         // Migrations organizer
         $this->info('Organizing migrations');
         $this->call('migrate:organise');
@@ -167,9 +170,6 @@ class InstallCommand extends Command
         $this->checkDirectories();
         $this->info('Publishing views');
         $this->publishViews();
-
-        // Sentry
-        $this->call('starter-kit:sentry');
 
         // Front-end processes
         $this->info('Publishing front-end assets');
