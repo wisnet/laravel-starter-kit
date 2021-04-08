@@ -4,21 +4,10 @@
 namespace Wisnet\LaravelStarterKit\Console;
 
 
-use Illuminate\Filesystem\Filesystem;
-
 class PublishViewsCommand extends InstallCommand
 {
-    const SIGNATURE = 'starter-kit:views';
-    const VIEWS_DIR = 'views';
-    const LAYOUTS_DIR = 'layouts';
-    const PASSWORDS_DIR = 'auth/passwords';
 
-    const DIRECTORIES = [
-        self::VIEWS_DIR => [
-            self::LAYOUTS_DIR,
-            self::PASSWORDS_DIR,
-        ],
-    ];
+    const SIGNATURE = 'starter-kit:views';
 
     /**
      * The name and signature of the console command.
@@ -42,24 +31,14 @@ class PublishViewsCommand extends InstallCommand
     public function __construct()
     {
         parent::__construct();
+
+        $this->checkDirectories(self::VIEWS_DIR);
     }
 
     public function handle()
     {
         $this->info('Publishing views');
-        $this->checkDirectories();
         $this->publishViews();
-    }
-
-    private function checkDirectories()
-    {
-        $this->filesystem = new Filesystem();
-        foreach (self::DIRECTORIES as $topDir => $dirs) {
-            $this->filesystem->ensureDirectoryExists(resource_path($topDir));
-            foreach ($dirs as $dir => $path) {
-                $this->filesystem->ensureDirectoryExists(sprintf('%s/%s', resource_path($topDir), $path));
-            }
-        }
     }
 
     private function publishViews()

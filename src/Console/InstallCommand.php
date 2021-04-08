@@ -12,6 +12,9 @@ class InstallCommand extends Command
 
     public $envFileExists;
 
+    const VIEWS_DIR = 'views';
+    const LAYOUTS_DIR = 'layouts';
+    const PASSWORDS_DIR = 'auth/passwords';
     const SASS_DIR = 'sass';
     const JS_DIR = 'js';
     const COMPONENTS_DIR = 'components';
@@ -28,6 +31,10 @@ class InstallCommand extends Command
     const WEBPACK = 'webpack.mix.js';
 
     const DIRECTORIES = [
+        self::VIEWS_DIR => [
+            self::LAYOUTS_DIR,
+            self::PASSWORDS_DIR,
+        ],
         self::SASS_DIR => [
             self::SASS_ABSTRACTS,
             self::SASS_BASE,
@@ -62,33 +69,6 @@ class InstallCommand extends Command
      * @var string
      */
     protected $description = 'Installs the starter kit';
-
-    protected $sassFiles = [
-        'abstracts/_abstracts.scss',
-        'abstracts/_colors.scss',
-        'abstracts/_functions.scss',
-        'abstracts/_mixins.scss',
-        'abstracts/_typography.scss',
-        'base/_base.scss',
-        'base/_buttons.scss',
-        'base/_form-elements.scss',
-        'base/_headings.scss',
-        'base/_links.scss',
-        'components/_components.scss',
-        'layout/_dashboard.scss',
-        'layout/_footer-main.scss',
-        'layout/_header-main.scss',
-        'layout/_layout.scss',
-        'modules/_modules.scss',
-        'pages/_pages.scss',
-        'app.scss',
-    ];
-
-    protected $jsFiles = [
-        'app.js',
-        'bootstrap.js',
-        'components/ExampleComponent.vue'
-    ];
 
     protected $devDependencies = [
         '@vue/compiler-sfc' => '^3.0.2',
@@ -129,6 +109,8 @@ class InstallCommand extends Command
         parent::__construct();
 
         $this->checkForEnvFile();
+
+        $this->filesystem = new Filesystem();
     }
 
     /**
@@ -158,10 +140,8 @@ class InstallCommand extends Command
         // Views
         $this->call('starter-kit:views');
 
-        // Front-end processes
-        $this->info('Publishing front-end assets');
-        $this->publishSassAssets();
-        $this->publishJsAssets();
+        // Front-end assets
+        $this->call('starter-kit:assets');
 
         $this->info('Updating package.json');
         $this->addNodePackages();
@@ -187,27 +167,11 @@ class InstallCommand extends Command
         $this->info('.env file not found, please generate it before running the ' . $signature . ' command.');
     }
 
-    private function publishSassAssets()
+    public function checkDirectories(string $directory)
     {
-        foreach ($this->sassFiles as $key => $value) {
-            $file = sprintf('%s/%s', resource_path(self::SASS_DIR), $value);
-
-            copy(
-                __DIR__ . '/../resources/sass/' . $value,
-                $file
-            );
-        }
-    }
-
-    private function publishJsAssets()
-    {
-        foreach ($this->jsFiles as $key => $value) {
-            $file = sprintf('%s/%s', resource_path(self::JS_DIR), $value);
-
-            copy(
-                __DIR__ . '/../resources/js/' . $value,
-                $file
-            );
+        $this->filesystem->ensureDirectoryExists(resource_path($directory));
+        foreach (self::DIRECTORIES[$directory] as $path) {
+            $this->filesystem->ensureDirectoryExists(sprintf('%s/%s', resource_path($directory), $path));
         }
     }
 
