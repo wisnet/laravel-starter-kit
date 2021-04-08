@@ -3,9 +3,7 @@
 namespace Wisnet\LaravelStarterKit\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Arr;
 
 class InstallCommand extends Command
 {
@@ -24,7 +22,6 @@ class InstallCommand extends Command
     const SASS_LAYOUT = 'layout';
     const SASS_MODULES = 'modules';
     const SASS_PAGES = 'pages';
-    const WEBPACK = 'webpack.mix.js';
 
     const DIRECTORIES = [
         self::VIEWS_DIR => [
@@ -102,9 +99,8 @@ class InstallCommand extends Command
         // Node
         $this->call('starter-kit:node');
 
-        $this->info('Updating webpack.mix.js');
-        $this->updateWebpack();
-        $this->info('webpack.mix.js updated');
+        // Webpack
+        $this->call('starter-kit:webpack');
 
         $this->info('Starter Kit installed successfully!');
         $this->warn('Run "npm install && mix" to compile resources');
@@ -130,11 +126,4 @@ class InstallCommand extends Command
         }
     }
 
-    private function updateWebpack()
-    {
-        copy(
-            __DIR__ . '/../' . self::WEBPACK,
-            base_path(self::WEBPACK)
-        );
-    }
 }
