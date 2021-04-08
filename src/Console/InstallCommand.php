@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class InstallCommand extends Command
 {
@@ -14,12 +13,9 @@ class InstallCommand extends Command
     public $envFileExists;
 
     const HANDLER_FILE = 'Exceptions/Handler.php';
-    const FORTIFY_PROVIDER = 'Providers/FortifyServiceProvider.php';
     const SENTRY_REPORT_SEARCH = 'public function report';
-    const FORTIFY_BOOT_SEARCH = 'Fortify::resetUserPasswordsUsing(ResetUserPassword::class);';
     const CLOSING_BRACKET = '}';
     const REPORT_PATH = __DIR__ . '/../report.txt';
-    const FORTIFY_PATH = __DIR__ . '/../fortify.txt';
     const LAYOUTS_DIR = 'layouts';
     const PASSWORDS_DIR = 'auth/passwords';
     const SASS_DIR = 'sass';
@@ -78,12 +74,6 @@ class InstallCommand extends Command
     protected $description = 'Installs the starter kit';
 
     protected $views = [
-        'auth/login.stub' => 'auth/login.blade.php',
-        'auth/passwords/confirm.stub' => 'auth/passwords/confirm.blade.php',
-        'auth/passwords/email.stub' => 'auth/passwords/email.blade.php',
-        'auth/passwords/reset.stub' => 'auth/passwords/reset.blade.php',
-        'auth/register.stub' => 'auth/register.blade.php',
-        'auth/verify.stub' => 'auth/verify.blade.php',
         'home.stub' => 'home.blade.php',
         'layouts/app.stub' => 'layouts/app.blade.php',
     ];
@@ -163,26 +153,26 @@ class InstallCommand extends Command
      */
     public function handle()
     {
-        // Back-end processes
+        // Telescope
         $this->call('starter-kit:telescope');
 
-        $this->info('Publishing Fortify assets');
-        $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
-        $this->publishFortifyServiceProvider();
+        // Fortify
+        $this->call('starter-kit:fortify');
 
+        // Dusk
         $this->info('Installing Dusk');
         $this->call('dusk:install');
 
+        // Migrations organizer
         $this->info('Organizing migrations');
         $this->call('migrate:organise');
 
+        // Views
         $this->checkDirectories();
         $this->info('Publishing views');
         $this->publishViews();
 
-        $this->info('Registering views with Fortify');
-        $this->registerViews();
-
+        // Sentry
         $this->info('Adding Sentry reporting to application\'s error handler');
         $this->addSentryReporting();
 
@@ -231,34 +221,6 @@ class InstallCommand extends Command
         }
     }
 
-    private function publishFortifyServiceProvider()
-    {
-        $namespace = Str::replaceLast('\\', '', $this->laravel->getNamespace());
-
-        $appConfig = file_get_contents(config_path('app.php'));
-
-        if (Str::contains($appConfig, $namespace . '\\Providers\\FortifyServiceProvider::class')) {
-            return;
-        }
-
-        $lineEndingCount = [
-            "\r\n" => substr_count($appConfig, "\r\n"),
-            "\r" => substr_count($appConfig, "\r"),
-            "\n" => substr_count($appConfig, "\n"),
-        ];
-
-        $eol = array_keys($lineEndingCount, max($lineEndingCount))[0];
-
-        file_put_contents(
-            config_path('app.php'),
-            str_replace(
-                "{$namespace}\\Providers\RouteServiceProvider::class," . $eol,
-                "{$namespace}\\Providers\RouteServiceProvider::class," . $eol . "        {$namespace}\Providers\FortifyServiceProvider::class," . $eol,
-                $appConfig
-            )
-        );
-    }
-
     private function checkDirectories()
     {
         $this->filesystem = new Filesystem();
@@ -285,17 +247,6 @@ class InstallCommand extends Command
                 $view
             );
         }
-    }
-
-    private function registerViews()
-    {
-        $provider = app_path(self::FORTIFY_PROVIDER);
-        $str = file_get_contents($provider);
-        $lPos = strpos($str, self::FORTIFY_BOOT_SEARCH);
-
-        $txt = file_get_contents(self::FORTIFY_PATH);
-        $str = substr_replace($str, $txt, $lPos + strlen(self::FORTIFY_BOOT_SEARCH));
-        file_put_contents($provider, $str);
     }
 
     private function publishSassAssets()
