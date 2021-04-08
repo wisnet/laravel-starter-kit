@@ -4,8 +4,6 @@
 namespace Wisnet\LaravelStarterKit\Console;
 
 
-use Illuminate\Support\Str;
-
 class SentryInstallCommand extends InstallCommand
 {
 

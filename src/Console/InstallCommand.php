@@ -12,10 +12,7 @@ class InstallCommand extends Command
 
     public $envFileExists;
 
-    const LAYOUTS_DIR = 'layouts';
-    const PASSWORDS_DIR = 'auth/passwords';
     const SASS_DIR = 'sass';
-    const VIEWS_DIR = 'views';
     const JS_DIR = 'js';
     const COMPONENTS_DIR = 'components';
     const SASS_ABSTRACTS = 'abstracts';
@@ -31,10 +28,6 @@ class InstallCommand extends Command
     const WEBPACK = 'webpack.mix.js';
 
     const DIRECTORIES = [
-        self::VIEWS_DIR => [
-            self::LAYOUTS_DIR,
-            self::PASSWORDS_DIR,
-        ],
         self::SASS_DIR => [
             self::SASS_ABSTRACTS,
             self::SASS_BASE,
@@ -47,6 +40,7 @@ class InstallCommand extends Command
             self::COMPONENTS_DIR
         ]
     ];
+
     const SCRIPTS_EXCEPTIONS = [
         'development',
         'watch',
@@ -68,11 +62,6 @@ class InstallCommand extends Command
      * @var string
      */
     protected $description = 'Installs the starter kit';
-
-    protected $views = [
-        'home.stub' => 'home.blade.php',
-        'layouts/app.stub' => 'layouts/app.blade.php',
-    ];
 
     protected $sassFiles = [
         'abstracts/_abstracts.scss',
@@ -167,9 +156,7 @@ class InstallCommand extends Command
         $this->call('migrate:organise');
 
         // Views
-        $this->checkDirectories();
-        $this->info('Publishing views');
-        $this->publishViews();
+        $this->call('starter-kit:views');
 
         // Front-end processes
         $this->info('Publishing front-end assets');
@@ -198,34 +185,6 @@ class InstallCommand extends Command
     public function displayEnvFileNotFoundMessage(string $signature)
     {
         $this->info('.env file not found, please generate it before running the ' . $signature . ' command.');
-    }
-
-    private function checkDirectories()
-    {
-        $this->filesystem = new Filesystem();
-        foreach (self::DIRECTORIES as $topDir => $dirs) {
-            $this->filesystem->ensureDirectoryExists(resource_path($topDir));
-            foreach ($dirs as $dir => $path) {
-                $this->filesystem->ensureDirectoryExists(sprintf('%s/%s', resource_path($topDir), $path));
-            }
-        }
-    }
-
-    private function publishViews()
-    {
-        foreach ($this->views as $key => $value) {
-            $view = sprintf('%s/%s', resource_path(self::VIEWS_DIR), $value);
-            if (file_exists($view) && !$this->option('force')) {
-                if (!$this->confirm("The [{$value}] view already exists. Do you want to replace it?")) {
-                    continue;
-                }
-            }
-
-            copy(
-                __DIR__ . '/../resources/views/' . $key,
-                $view
-            );
-        }
     }
 
     private function publishSassAssets()
