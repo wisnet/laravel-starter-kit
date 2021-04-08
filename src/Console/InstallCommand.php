@@ -11,7 +11,8 @@ use Illuminate\Support\Str;
 class InstallCommand extends Command
 {
 
-    const TELESCOPE_KEY = 'TELESCOPE_ENABLED=';
+    public $envFileExists;
+
     const HANDLER_FILE = 'Exceptions/Handler.php';
     const FORTIFY_PROVIDER = 'Providers/FortifyServiceProvider.php';
     const SENTRY_REPORT_SEARCH = 'public function report';
@@ -148,6 +149,13 @@ class InstallCommand extends Command
 
     protected $filesystem;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->checkForEnvFile();
+    }
+
     /**
      * Execute the command.
      *
@@ -156,13 +164,7 @@ class InstallCommand extends Command
     public function handle()
     {
         // Back-end processes
-        $this->info('Adding Telescope key to the .env file');
-        $this->addTelescopeToEnvFile();
-
-        $this->info('Installing Telescope');
-        $this->call('telescope:install');
-        $this->info('Publishing Telescope migrations');
-        $this->call('vendor:publish', ['--tag' => 'telescope-migrations']);
+        $this->call('starter-kit:telescope');
 
         $this->info('Publishing Fortify assets');
         $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
@@ -201,21 +203,16 @@ class InstallCommand extends Command
         $this->warn('Run "npm install && mix" to compile resources');
     }
 
-    private function addTelescopeToEnvFile()
+    public function checkForEnvFile()
     {
         $envFile = app()->environmentFilePath();
-        try {
-            $str = file_get_contents($envFile);
-            $keyPos = strpos($str, self::TELESCOPE_KEY);
 
-            if ($keyPos === false) {
-                $str .= PHP_EOL . self::TELESCOPE_KEY . 'true' . PHP_EOL;
-            }
+        $this->envFileExists = !empty(file_get_contents($envFile));
+    }
 
-            file_put_contents($envFile, $str);
-        } catch (\ErrorException $e) {
-            $this->info('.env file not found, please generate it before running install command.');
-        }
+    public function displayEnvFileNotFoundMessage(string $signature)
+    {
+        $this->info('.env file not found, please generate it before running the ' . $signature . ' command.');
     }
 
     private function addSentryReporting()
