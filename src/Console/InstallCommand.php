@@ -12,10 +12,6 @@ class InstallCommand extends Command
 
     public $envFileExists;
 
-    const HANDLER_FILE = 'Exceptions/Handler.php';
-    const SENTRY_REPORT_SEARCH = 'public function report';
-    const CLOSING_BRACKET = '}';
-    const REPORT_PATH = __DIR__ . '/../report.txt';
     const LAYOUTS_DIR = 'layouts';
     const PASSWORDS_DIR = 'auth/passwords';
     const SASS_DIR = 'sass';
@@ -173,8 +169,7 @@ class InstallCommand extends Command
         $this->publishViews();
 
         // Sentry
-        $this->info('Adding Sentry reporting to application\'s error handler');
-        $this->addSentryReporting();
+        $this->call('starter-kit:sentry');
 
         // Front-end processes
         $this->info('Publishing front-end assets');
@@ -203,22 +198,6 @@ class InstallCommand extends Command
     public function displayEnvFileNotFoundMessage(string $signature)
     {
         $this->info('.env file not found, please generate it before running the ' . $signature . ' command.');
-    }
-
-    private function addSentryReporting()
-    {
-        $handlerFile = app_path(self::HANDLER_FILE);
-        $str = file_get_contents($handlerFile);
-        $fPos = strpos($str, self::SENTRY_REPORT_SEARCH);
-
-        if ($fPos === false) {
-            $closerPos = strpos($str, self::CLOSING_BRACKET, -1);
-            $fn = file_get_contents(self::REPORT_PATH) . PHP_EOL . self::CLOSING_BRACKET;
-
-            $str = substr_replace($str, $fn, $closerPos - 2);
-
-            file_put_contents($handlerFile, $str);
-        }
     }
 
     private function checkDirectories()
