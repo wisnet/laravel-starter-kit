@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Policies;
+
+use Spatie\Csp\Policies\Basic;
+use Spatie\Csp\Directive;
+
+class CSPPolicy extends Basic
+{
+
+    // Add allowed styles origins here
+    const ALLOWED_STYLES = [
+        'https://fonts.googleapis.com',
+    ];
+
+    // Add allowed scripts origins here
+    const ALLOWED_SCRIPTS = [
+        'https://cdnjs.cloudflare.com',
+    ];
+
+    public function configure()
+    {
+        parent::configure();
+
+        $this->addDirective(Directive::STYLE, self::ALLOWED_STYLES);
+        $this->addDirective(Directive::SCRIPT, self::ALLOWED_SCRIPTS);
+    }
+
+}

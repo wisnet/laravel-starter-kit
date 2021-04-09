@@ -3,6 +3,7 @@
 namespace Wisnet\LaravelStarterKit;
 
 use Illuminate\Support\ServiceProvider;
+use Wisnet\LaravelStarterKit\Console\CSPInstallCommand;
 use Wisnet\LaravelStarterKit\Console\FortifyInstallCommand;
 use Wisnet\LaravelStarterKit\Console\InstallCommand;
 use Wisnet\LaravelStarterKit\Console\NodePackagesInstallCommand;
@@ -28,7 +29,8 @@ class LaravelStarterKitServiceProvider extends ServiceProvider
                 PublishViewsCommand::class,
                 SentryInstallCommand::class,
                 TelescopeInstallCommand::class,
-                WebpackUpdateCommand::class
+                WebpackUpdateCommand::class,
+                CSPInstallCommand::class
             ]
         );
     }

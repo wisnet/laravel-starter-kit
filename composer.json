@@ -23,7 +23,8 @@
     "laravel/fortify": "^1.7",
     "jaybizzle/laravel-migrations-organiser": "^6.0",
     "sentry/sentry-laravel": "^2.2",
-    "laravel/dusk": "^6.8"
+    "laravel/dusk": "^6.8",
+    "spatie/laravel-csp": "^2.6"
   },
   "autoload": {
     "psr-4": {
