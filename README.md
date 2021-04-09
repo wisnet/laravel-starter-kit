@@ -13,6 +13,7 @@ This starter kit includes the following composer packages:
 - [Sentry](https://github.com/getsentry/sentry-laravel)
 - [Migrations Organizer](https://github.com/JayBizzle/Laravel-Migrations-Organiser)
 - [Dusk](https://github.com/laravel/dusk)
+- [Laravel CSP](https://github.com/spatie/laravel-csp)
 
 The following front-end packages will be installed:
 
@@ -116,6 +117,22 @@ or publish them by running the following commands:
 - `php artisan starter-kit:assets` publishes JS and CSS assets.
 - `php artisan starter-kit:node` adds dependencies to `package.json`.
 - `php artisan starter-kit:webpack` updates `webpack.mix.js`.
+- `php artisan starter-kit:csp` installs and publishes CSP assets.
+
+## Content Security Policy
+
+Content Security Policy (CSP) is an important step in securing your project as it prevents external scripts
+to be executed. To better understand why you should set csp headers please read [this article](https://medium.com/hackernoon/im-harvesting-credit-card-numbers-and-passwords-from-your-site-here-s-how-9a8cb347c5b5) by [David Gilbertson](https://twitter.com/D__Gilbertson).
+
+
+CSP is included in the starter kit and turned on by default, you can turn it off by
+setting `CSP_ENABLED=false` in your `.env` file.
+
+By default only scripts, styles, images, media and form actions that originate from your site will be allowed.
+External styles and scripts provided by the starter kit will be allowed, additional external sources need to be
+allowed.
+
+To learn more about CSP and how to use it check the [docs at MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
 
 ## Next Steps
 
@@ -134,6 +151,7 @@ The official documentation for each package can be found in the following links:
 - [Telescope](https://laravel.com/docs/8.x/telescope)
 - [Fortify](https://github.com/laravel/fortify)
 - [Sentry](https://docs.sentry.io/platforms/php/guides/laravel/)
+- [Laravel CSP](https://github.com/spatie/laravel-csp)
 - [Migrations Organizer](https://github.com/JayBizzle/Laravel-Migrations-Organiser)
 - [Dusk](https://laravel.com/docs/8.x/dusk)
 - [Vue](https://v3.vuejs.org/guide/installation.html)
