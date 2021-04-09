@@ -19,6 +19,17 @@ class LaravelStarterKitServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->commands([InstallCommand::class, FortifyInstallCommand::class, NodePackagesInstallCommand::class, PublishAssetsCommand::class, PublishViewsCommand::class, SentryInstallCommand::class, TelescopeInstallCommand::class, WebpackUpdateCommand::class]);
+        $this->commands(
+            [
+                InstallCommand::class,
+                FortifyInstallCommand::class,
+                NodePackagesInstallCommand::class,
+                PublishAssetsCommand::class,
+                PublishViewsCommand::class,
+                SentryInstallCommand::class,
+                TelescopeInstallCommand::class,
+                WebpackUpdateCommand::class
+            ]
+        );
     }
 }
