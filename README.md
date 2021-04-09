@@ -104,6 +104,19 @@ Run `npm install` to install packages.
 
 Compile front-end assets by running `mix`
 
+### Installing or publishing individual pieces
+
+In the event new dependencies are added to the starter kit or assets change, you can individually install
+or publish them by running the following commands:
+
+- `php artisan starter-kit:telescope` installs and publishes Telescope assets.
+- `php artisan starter-kit:fortify` installs and publishes Fortify assets.
+- `php artisan starter-kit:sentry` installs and publishes Sentry assets.
+- `php artisan starter-kit:views` publishes views.
+- `php artisan starter-kit:assets` publishes JS and CSS assets.
+- `php artisan starter-kit:node` adds dependencies to `package.json`.
+- `php artisan starter-kit:webpack` updates `webpack.mix.js`.
+
 ## Next Steps
 
 If you're planning on using Sentry for error reporting make sure to get a DSN (visit [sentry.io](https://sentry.io/welcome/) to create a new account or access your existing one).
