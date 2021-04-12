@@ -46,7 +46,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'starter-kit:install {--force : Overwrite existing views by default}';
+    protected $signature = 'starter-kit:install';
 
     /**
      * The command description.
