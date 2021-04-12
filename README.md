@@ -4,6 +4,8 @@
 
 The Laravel Starter Kit is a compilation of packages that will help you speed up the development process when starting with a fresh Laravel project.
 
+Please note this package is meant for new Laravel projects as it publishes views and assets and overrides existing ones as well.
+
 ## What's Included
 
 This starter kit includes the following composer packages:
