@@ -22,15 +22,13 @@ class CSPInstallCommand extends InstallCommand
     const CONFIG_SEARCH = "'policy' => Spatie\Csp\Policies\Basic::class,";
     const CONFIG_REPLACE = "'policy' => \App\Policies\CSPPolicy::class,";
     const HANDLER_FILE = 'Exceptions/Handler.php';
-    const RENDER_SEARCH = 'public function render';
-    const RENDER_PATH = __DIR__ . '/../resources/csp/render.txt';
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = self::SIGNATURE;
+    protected $signature = self::SIGNATURE . ' {--force : Overwrite existing assets by default}';
 
     /**
      * The command description.
@@ -59,7 +57,7 @@ class CSPInstallCommand extends InstallCommand
             $this->publishCSPConfig();
             $this->publishCSPPolicy();
             $this->publishCSPViews();
-            $this->addRenderMethodToHandler();
+            $this->publishHandler();
 
             $this->info('Adding CSP key to the .env file');
             $this->addCspToEnvFile();
@@ -110,20 +108,19 @@ class CSPInstallCommand extends InstallCommand
         }
     }
 
-    private function addRenderMethodToHandler()
+    private function publishHandler()
     {
-        $handlerFile = app_path(self::HANDLER_FILE);
-        $str = file_get_contents($handlerFile);
-        $fPos = strpos($str, self::RENDER_SEARCH);
-
-        if ($fPos === false) {
-            $closerPos = strpos($str, '}', -1);
-            $fn = file_get_contents(self::RENDER_PATH) . PHP_EOL . '}';
-
-            $str = substr_replace($str, $fn, $closerPos - 2);
-
-            file_put_contents($handlerFile, $str);
+        $handler = app_path(self::HANDLER_FILE);
+        if (file_exists($handler) && !$this->option('force')) {
+            if (!$this->confirm('Handler.php already exists. Do you want to replace it?')) {
+                return;
+            }
         }
+
+        copy(
+            __DIR__ . '/../resources/csp/Handler.stub',
+            $handler
+        );
     }
 
     private function addCspToEnvFile()
