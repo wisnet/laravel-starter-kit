@@ -10,9 +10,9 @@ class FortifyInstallCommand extends InstallCommand
 {
 
     const SIGNATURE = 'starter-kit:fortify';
+
     const FORTIFY_PROVIDER = 'Providers/FortifyServiceProvider.php';
-    const FORTIFY_BOOT_SEARCH = 'Fortify::resetUserPasswordsUsing(ResetUserPassword::class);';
-    const FORTIFY_PATH = __DIR__ . '/../fortify.txt';
+    const PROVIDER_STUB = 'FortifyServiceProvider.stub';
 
     /**
      * The name and signature of the console command.
@@ -46,15 +46,19 @@ class FortifyInstallCommand extends InstallCommand
     {
         $this->info('Publishing Fortify assets');
         $this->call('vendor:publish', ['--provider' => 'Laravel\Fortify\FortifyServiceProvider']);
-        $this->publishFortifyServiceProvider();
+        $this->publishServiceProvider();
 
         $this->info('Publishing and registering views with Fortify');
         $this->publishFortifyViews();
-        $this->registerFortifyViews();
     }
 
-    private function publishFortifyServiceProvider()
+    private function publishServiceProvider()
     {
+        copy(
+            __DIR__ . '/../resources/fortify/' . self::PROVIDER_STUB,
+            app_path(self::FORTIFY_PROVIDER)
+        );
+
         $namespace = Str::replaceLast('\\', '', $this->laravel->getNamespace());
 
         $appConfig = file_get_contents(config_path('app.php'));
@@ -91,17 +95,6 @@ class FortifyInstallCommand extends InstallCommand
                 $view
             );
         }
-    }
-
-    private function registerFortifyViews()
-    {
-        $provider = app_path(self::FORTIFY_PROVIDER);
-        $str = file_get_contents($provider);
-        $lPos = strpos($str, self::FORTIFY_BOOT_SEARCH);
-
-        $txt = file_get_contents(self::FORTIFY_PATH);
-        $str = substr_replace($str, $txt, $lPos + strlen(self::FORTIFY_BOOT_SEARCH));
-        file_put_contents($provider, $str);
     }
 
 }
