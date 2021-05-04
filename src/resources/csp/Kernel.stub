@@ -50,10 +50,11 @@ class Handler extends ExceptionHandler
      * Render an exception into a response.
      *
      * @param Request $request
+     * @param $e
      * @return Response|\Symfony\Component\HttpFoundation\Response
-     * @throws Throwable
      * @throws InvalidDirective
      * @throws InvalidValueSet
+     * @throws Throwable
      */
     public function render($request, $e)
     {
