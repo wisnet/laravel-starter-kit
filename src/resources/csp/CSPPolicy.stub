@@ -2,28 +2,29 @@
 
 namespace App\Policies;
 
-use Spatie\Csp\Policies\Basic;
 use Spatie\Csp\Directive;
+use Spatie\Csp\Keyword;
+use Spatie\Csp\Policies\Basic;
 
 class CSPPolicy extends Basic
 {
-
-    // Add allowed styles origins here
-    const ALLOWED_STYLES = [
-        'https://fonts.googleapis.com',
-    ];
-
-    // Add allowed scripts origins here
-    const ALLOWED_SCRIPTS = [
-        'https://cdnjs.cloudflare.com',
+    // Add allowed origins here
+    const ALLOWED_ORIGINS = [
+        Keyword::SELF,
+        'cdnjs.cloudflare.com',
+        'fonts.googleapis.com',
+        'fonts.gstatic.com',
     ];
 
     public function configure()
     {
         parent::configure();
 
-        $this->addDirective(Directive::STYLE, self::ALLOWED_STYLES);
-        $this->addDirective(Directive::SCRIPT, self::ALLOWED_SCRIPTS);
+        $this->addDirective(Directive::STYLE, self::ALLOWED_ORIGINS)
+            ->addDirective(Directive::STYLE_ELEM, self::ALLOWED_ORIGINS)
+            ->addDirective(Directive::FONT, self::ALLOWED_ORIGINS)
+            ->addDirective(Directive::SCRIPT, self::ALLOWED_ORIGINS)
+            ->addNonceForDirective(Directive::STYLE_ELEM)
+            ->addNonceForDirective(Directive::FONT);
     }
-
 }
