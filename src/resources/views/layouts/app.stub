@@ -29,11 +29,6 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <link rel="icon" type="image/png" href="{{asset('images/favicon.ico')}}"/>
-
-    <!--[if lt IE 9]>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 </head>
 <body>
     <div id="app">
