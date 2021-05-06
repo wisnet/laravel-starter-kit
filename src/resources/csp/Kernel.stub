@@ -1,82 +1,68 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\Http;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Spatie\Csp\Exceptions\InvalidDirective;
-use Spatie\Csp\Exceptions\InvalidValueSet;
-use Throwable;
-use App\Policies\CSPPolicy;
-use Spatie\Csp\Directive;
-use Spatie\Csp\Keyword;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Spatie\Csp\AddCspHeaders;
 
-class Handler extends ExceptionHandler
+class Kernel extends HttpKernel
 {
     /**
-     * A list of the exception types that are not reported.
+     * The application's global HTTP middleware stack.
+     *
+     * These middleware are run during every request to your application.
      *
      * @var array
      */
-    protected $dontReport = [
-        //
+    protected $middleware = [
+        // \App\Http\Middleware\TrustHosts::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Fruitcake\Cors\HandleCors::class,
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        AddCspHeaders::class
     ];
 
     /**
-     * A list of the inputs that are never flashed for validation exceptions.
+     * The application's route middleware groups.
      *
      * @var array
      */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
+    protected $middlewareGroups = [
+        'web' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'api' => [
+            'throttle:api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
+     * The application's route middleware.
      *
-     * @return void
-     */
-    public function register()
-    {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
-    }
-
-    /**
-     * Render an exception into a response.
+     * These middleware may be assigned to groups or used individually.
      *
-     * @param Request $request
-     * @param $e
-     * @return Response|\Symfony\Component\HttpFoundation\Response
-     * @throws InvalidDirective
-     * @throws InvalidValueSet
-     * @throws Throwable
+     * @var array
      */
-    public function render($request, $e)
-    {
-        $this->container->singleton(CSPPolicy::class, function ($app) {
-            return new CSPPolicy();
-        });
-        app(CSPPolicy::class)->addDirective(Directive::SCRIPT, Keyword::UNSAFE_INLINE);
-        app(CSPPolicy::class)->addDirective(Directive::STYLE, Keyword::UNSAFE_INLINE);
-
-        return parent::render($request, $e);
-    }
-
-    /**
-     * Uncomment this if you're using Sentry. Once you have your DSN run the following command:
-     * php artisan sentry:publish --dsn=your_DSN
-     */
-    // public function report(Throwable $exception)
-    // {
-    //     if ($this->shouldReport($exception) && app()->bound('sentry')) {
-    //         app('sentry')->captureException($exception);
-    //     }
-    //
-    //     parent::report($exception);
-    // }
+    protected $routeMiddleware = [
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+    ];
 }
