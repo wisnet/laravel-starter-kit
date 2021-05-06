@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Spatie\Csp\Exceptions\InvalidDirective;
+use Spatie\Csp\Exceptions\InvalidValueSet;
 use Throwable;
 use App\Policies\CSPPolicy;
 use Spatie\Csp\Directive;
@@ -47,14 +49,17 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into a response.
      *
-     * @param  Request  $request
-     * @param  \Exception  $e
+     * @param Request $request
+     * @param $e
      * @return Response|\Symfony\Component\HttpFoundation\Response
+     * @throws InvalidDirective
+     * @throws InvalidValueSet
+     * @throws Throwable
      */
-    public function render($request, Exception $e)
+    public function render($request, $e)
     {
         $this->container->singleton(CSPPolicy::class, function ($app) {
-            return new CSPPolicy::class();
+            return new CSPPolicy();
         });
         app(CSPPolicy::class)->addDirective(Directive::SCRIPT, Keyword::UNSAFE_INLINE);
         app(CSPPolicy::class)->addDirective(Directive::STYLE, Keyword::UNSAFE_INLINE);
